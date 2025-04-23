@@ -12,6 +12,7 @@ Cette calculatrice web permet de réaliser des calculs scientifiques avancés, a
 
 ## Lien
 Essayez-la ici : [Calculatrice Scientifique RL](https://jawed56.github.io/Calculatrice-Scientifique-RL/calculatrice_scientifique.html)
+https://jawed56.github.io/Calculatrice-Scientifique-RL/calculatrice_scientifique.html.
 
 ## Design
 - Fond arc-en-ciel animé
