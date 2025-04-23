@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculatrice Scientifique RL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400%;
+            animation: colorShift 10s ease infinite;
+        }
+        @keyframes colorShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .calculator {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        .person-image {
+            width: 350px;
+            height: 396px;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #display {
+            width: 90%;
+            padding: 10px;
+            font-size: 24px;
+            margin-bottom: 10px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            text-align: right;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+        }
+        button {
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #fff9c4; /* Jaune pâle pour les touches numériques */
+        }
+        button:hover {
+            background-color: #ffecb3; /* Survol jaune pâle */
+        }
+        .operator {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .operator:hover {
+            background-color: #45a049;
+        }
+        .function {
+            background-color: #2196F3;
+            color: white;
+        }
+        .function:hover {
+            background-color: #1e88e5;
+        }
+        .memory {
+            background-color: #ff9800;
+            color: white;
+        }
+        .memory:hover {
+            background-color: #fb8c00;
+        }
+        .clear {
+            background-color: #f44336;
+            color: white;
+        }
+        .clear:hover {
+            background-color: #d32f2f;
+        }
+        #history {
+            margin-top: 10px;
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 14px;
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .mode-toggle {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Calculatrice Scientifique RL</h1>
+        <input type="text" id="display" readonly value="0">
+        <div class="mode-toggle">
+            <label>Mode : </label>
+            <select id="angleMode">
+                <option value="degrees">Degrés</option>
+                <option value="radians">Radians</option>
+            </select>
+        </div>
+        <div class="buttons">
+            <!-- Mémoire -->
+            <button class="memory" onclick="memoryClear()">MC</button>
+            <button class="memory" onclick="memoryRecall()">MR</button>
+            <button class="memory" onclick="memoryAdd()">M+</button>
+            <button class="memory" onclick="memorySubtract()">M-</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+
+            <!-- Fonctions avancées -->
+            <button class="function" onclick="calculateFunction('Math.sqrt')">√</button>
+            <button class="function" onclick="calculateFunction('Math.pow', prompt('Exposant ?'))">x^y</button>
+            <button class="function" onclick="calculateFunction('factorial')">x!</button>
+            <button class="function" onclick="calculateFunction('inverse')">1/x</button>
+            <button class="operator" onclick="appendToDisplay('/')">÷</button>
+
+            <!-- Constantes et fonctions trigonométriques -->
+            <button class="function" onclick="appendToDisplay('Math.PI')">π</button>
+            <button class="function" onclick="appendToDisplay('Math.E')">e</button>
+            <button class="function" onclick="calculateFunction('Math.sin')">sin</button>
+            <button class="function" onclick="calculateFunction('Math.cos')">cos</button>
+            <button class="function" onclick="calculateFunction('Math.tan')">tan</button>
+
+            <!-- Nombres et opérateurs -->
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            <button onclick="appendToDisplay('(')">(</button>
+
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            <button onclick="appendToDisplay(')')">)</button>
+
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            <button class="function" onclick="calculateFunction('Math.log')">ln</button>
+
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="calculate()">=</button>
+            <button class="function" onclick="calculateFunction('Math.log10')">log</button>
+            <button class="function" onclick="calculateFunction('Math.exp')">e^x</button>
+
+            <!-- Autres fonctions -->
+            <button class="function" onclick="calculatePercent()">%</button>
+            <button class="function" onclick="calculateFunction('Math.abs')">|x|</button>
+            <button class="clear" onclick="clearHistory()">Clear Hist.</button>
+            <button class="function" onclick="appendToDisplay('Math.E')">e</button>
+            <button class="function" onclick="appendToDisplay('Math.PI')">π</button>
+        </div>
+        <div id="history">Historique :</div>
+    </div>
+    <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
+
+    <script>
+        let display = document.getElementById('display');
+        let history = document.getElementById('history');
+        let memory = 0;
+        let angleMode = document.getElementById('angleMode');
+
+        function appendToDisplay(value) {
+            if (display.value === '0') {
+                display.value = value;
+            } else {
+                display.value += value;
+            }
+        }
+
+        function clearDisplay() {
+            display.value = '0';
+        }
+
+        function clearHistory() {
+            history.innerHTML = 'Historique :';
+        }
+
+        function calculate() {
+            try {
+                let expression = display.value;
+                let result = eval(expression);
+                if (isFinite(result)) {
+                    display.value = result.toFixed(4);
+                    history.innerHTML += `<br>${expression} = ${result.toFixed(4)}`;
+                } else {
+                    display.value = 'Erreur';
+                }
+            } catch (e) {
+                display.value = 'Erreur';
+            }
+        }
+
+        function calculateFunction(func, extraArg = null) {
+            try {
+                let value = parseFloat(display.value);
+                let result;
+                let mode = angleMode.value;
+                let angle = value;
+
+                if (mode === 'degrees' && (func === 'Math.sin' || func === 'Math.cos' || func === 'Math.tan')) {
+                    angle = value * (Math.PI / 180); // Convertir degrés en radians
+                }
+
+                switch (func) {
+                    case 'Math.sqrt':
+                        result = Math.sqrt(value);
+                        break;
+                    case 'Math.sin':
+                        result = Math.sin(angle);
+                        break;
+                    case 'Math.cos':
+                        result = Math.cos(angle);
+                        break;
+                    case 'Math.tan':
+                        result = Math.tan(angle);
+                        break;
+                    case 'Math.log':
+                        result = Math.log(value);
+                        break;
+                    case 'Math.log10':
+                        result = Math.log10(value);
+                        break;
+                    case 'Math.exp':
+                        result = Math.exp(value);
+                        break;
+                    case 'Math.pow':
+                        result = Math.pow(value, parseFloat(extraArg));
+                        break;
+                    case 'Math.abs':
+                        result = Math.abs(value);
+                        break;
+                    case 'factorial':
+                        result = factorial(value);
+                        break;
+                    case 'inverse':
+                        result = 1 / value;
+                        break;
+                    default:
+                        result = 'Erreur';
+                }
+
+                if (isFinite(result)) {
+                    display.value = result.toFixed(4);
+                    history.innerHTML += `<br>${func}(${value}${extraArg ? ',' + extraArg : ''}) = ${result.toFixed(4)}`;
+                } else {
+                    display.value = 'Erreur';
+                }
+            } catch (e) {
+                display.value = 'Erreur';
+            }
+        }
+
+        function factorial(n) {
+            n = Math.floor(n);
+            if (n < 0) return 'Erreur';
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        function calculatePercent() {
+            try {
+                let value = parseFloat(display.value);
+                let result = value / 100;
+                display.value = result.toFixed(4);
+                history.innerHTML += `<br>${value}% = ${result.toFixed(4)}`;
+            } catch (e) {
+                display.value = 'Erreur';
+            }
+        }
+
+        function memoryAdd() {
+            memory += parseFloat(display.value) || 0;
+        }
+
+        function memorySubtract() {
+            memory -= parseFloat(display.value) || 0;
+        }
+
+        function memoryRecall() {
+            display.value = memory.toString();
+        }
+
+        function memoryClear() {
+            memory = 0;
+        }
+    </script>
+</body>
+</html>
