@@ -1,6 +1,6 @@
-# Calculatrice Scientifique RL
+# calculatrice_scientifique
 
-Bienvenue sur ma Calculatrice Scientifique RL ! 🌈
+Bienvenue sur ma calculatrice_scientifique ! 🌈
 
 Cette calculatrice web permet de réaliser des calculs scientifiques avancés, avec des fonctionnalités comme :
 - Opérations de base (+, -, ×, ÷)
