@@ -28,12 +28,15 @@
             margin-bottom: 20px;
         }
         .person-image {
-            width: 60px;
-            height: 60px;
-            margin-top: 10px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
+    width: 80px; /* Réduit encore plus la taille */
+    height: 80px;
+    position: absolute;
+    bottom: 5px; /* Rapproché du bas */
+    right: 5px; /* Rapproché de la droite */
+    border-radius: 50%; /* Toujours circulaire */
+    object-fit: cover; /* S'adapte bien dans le cercle */
+    border: 3px solid #2196F3; /* Bordure un peu plus épaisse et bleu plus foncé */
+}
         }
         #display {
             width: 90%;
