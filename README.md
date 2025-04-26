@@ -1,6 +1,6 @@
-# calculatrice_scientifique
+# calculatrice scientifique
 
-Bienvenue sur ma calculatrice_scientifique ! 🌈
+Bienvenue sur ma calculatrice scientifique ! 🌈
 
 Cette calculatrice web permet de réaliser des calculs scientifiques avancés, avec des fonctionnalités comme :
 - Opérations de base (+, -, ×, ÷)
@@ -11,7 +11,7 @@ Cette calculatrice web permet de réaliser des calculs scientifiques avancés, a
 - Mode degrés/radians
 
 ## Lien
-Essayez-la ici : (https://jawed56.github.io/calculatrice_scientifique/calculatrice_scientifique.html)
+Essayez-la ici : (https://jawed56.github.io/calculatrice scientifique/calculatrice scientifique.html)
 
 
 ## Design
