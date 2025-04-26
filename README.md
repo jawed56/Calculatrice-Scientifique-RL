@@ -11,7 +11,7 @@ Cette calculatrice web permet de réaliser des calculs scientifiques avancés, a
 - Mode degrés/radians
 
 ## Lien
-Essayez-la ici : (https://jawed56.github.io/calculatrice-scientifique/calculatrice_scientifique.html)
+Essayez-la ici : (https://jawed56.github.io/calculatrice-scientifique/calculatrice-scientifique.html)
 
 
 ## Design
