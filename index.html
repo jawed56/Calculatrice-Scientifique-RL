@@ -2,10 +2,1245 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0;url=calculatrice-scientifique.html">
-    <title>Redirection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculatrice, Agenda, Boussole, Chronomètre et Carte ThinkPad RL</title>
+    <!-- Intégration de FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <!-- Intégration de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400%;
+            animation: colorShift 10s ease infinite;
+            transition: background 0.3s, color 0.3s;
+        }
+        @keyframes colorShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.dark-mode {
+            background: #222;
+            color: #ddd;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            background-color: #ddd;
+            transition: background-color 0.3s;
+        }
+        .tab-button.active {
+            background-color: #2196F3;
+            color: white;
+        }
+        .tab-button:hover {
+            background-color: #bbb;
+        }
+        .tab-content {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #agenda.tab-content {
+            background-color: #FF6F61;
+        }
+        .dark-mode #agenda.tab-content {
+            background-color: #E65A50;
+        }
+        #compass.tab-content {
+            background-color: #e0f7fa;
+            text-align: center;
+        }
+        .dark-mode #compass.tab-content {
+            background-color: #006064;
+        }
+        #stopwatch.tab-content {
+            background-color: #fff3e0;
+            text-align: center;
+        }
+        .dark-mode #stopwatch.tab-content {
+            background-color: #ef6c00;
+        }
+        #map.tab-content {
+            background-color: #e8f5e9;
+            text-align: center;
+        }
+        .dark-mode #map.tab-content {
+            background-color: #2e7d32;
+        }
+        .dark-mode .tab-content {
+            color: #ddd;
+        }
+        .dark-mode .tab-button {
+            background-color: #555;
+            color: #ddd;
+        }
+        .dark-mode .tab-button.active {
+            background-color: #1e88e5;
+        }
+        .dark-mode .tab-button:hover {
+            background-color: #666;
+        }
+        .person-image {
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #2196F3;
+        }
+        .theme-toggle, .color-picker {
+            position: fixed;
+            padding: 10px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .theme-toggle {
+            top: 20px;
+            right: 20px;
+        }
+        .color-picker {
+            top: 60px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .color-picker input[type="color"] {
+            border: none;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+        .theme-toggle:hover, .color-picker:hover {
+            background-color: #1e88e5;
+        }
+        /* Styles Calculatrice */
+        #calc-display {
+            width: 90%;
+            padding: 10px;
+            font-size: 24px;
+            margin-bottom: 10px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            text-align: right;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #calc-display {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+        }
+        .calc-button {
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #fff9c4;
+            transition: background-color 0.3s;
+        }
+        .calc-button:hover {
+            background-color: #ffecb3;
+        }
+        .dark-mode .calc-button {
+            background-color: #555;
+            color: #ddd;
+        }
+        .dark-mode .calc-button:hover {
+            background-color: #666;
+        }
+        .operator {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .operator:hover {
+            background-color: #45a049;
+        }
+        .function {
+            background-color: #2196F3;
+            color: white;
+        }
+        .function:hover {
+            background-color: #1e88e5;
+        }
+        .memory {
+            background-color: #ff9800;
+            color: white;
+        }
+        .memory:hover {
+            background-color: #fb8c00;
+        }
+        .clear {
+            background-color: #f44336;
+            color: white;
+        }
+        .clear:hover {
+            background-color: #d32f2f;
+        }
+        #calc-history {
+            margin-top: 10px;
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 14px;
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #calc-history {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        /* Styles Agenda */
+        .agenda-form {
+            margin-bottom: 20px;
+        }
+        .agenda-input, .agenda-select, .agenda-button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #333;
+        }
+        #agenda .agenda-input,
+        #agenda .agenda-select {
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #agenda .agenda-input,
+        .dark-mode #agenda .agenda-select {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        .agenda-button {
+            background-color: #2196F3;
+            color: white;
+            cursor: pointer;
+        }
+        .agenda-button:hover {
+            background-color: #1e88e5;
+        }
+        .delete-btn {
+            background-color: #f44336;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        #event-list {
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #event-list {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        .event-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .event-meeting {
+            background-color: #FFE0DC;
+        }
+        .event-task {
+            background-color: #FFF5F3;
+        }
+        .dark-mode .event-meeting {
+            background-color: #D94A3E;
+        }
+        .dark-mode .event-task {
+            background-color: #C43F35;
+        }
+        #calendar {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        #agenda #calendar {
+            background-color: #fff;
+        }
+        .dark-mode #agenda #calendar {
+            background-color: #333;
+        }
+        .dark-mode .fc {
+            background-color: #333;
+            color: #ddd;
+        }
+        .dark-mode .fc-daygrid-day {
+            background-color: #444;
+        }
+        .dark-mode .fc-daygrid-day-number {
+            color: #ddd;
+        }
+        .dark-mode .fc-col-header-cell {
+            background-color: #555;
+            color: #ddd;
+        }
+        .calendar-view-toggle {
+            margin-bottom: 10px;
+        }
+        /* Styles Boussole */
+        .compass-container {
+            position: relative;
+            width: 200px;
+            heightoree200px;
+            margin: 20px auto;
+        }
+        .compass {
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/5lW5Z5b.png') no-repeat center center;
+            background-size: cover;
+            border-radius: 50%;
+            position: relative;
+        }
+        .needle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 80px;
+            background-color: red;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%) rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+        .compass-message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+        .dark-mode .compass-message {
+            color: #ddd;
+        }
+        .compass-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+            margin-top: 10px;
+        }
+        .compass-button:hover {
+            background-color: #1e88e5;
+        }
+        /* Styles Chronomètre */
+        #stopwatch-display {
+            font-size: 48px;
+            font-family: monospace;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #stopwatch-display {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        .stopwatch-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stopwatch-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+        }
+        .stopwatch-button:hover {
+            background-color: #1e88e5;
+        }
+        .stopwatch-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #lap-list {
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #lap-list {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        #stopwatch-history {
+            max-height: 100px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #stopwatch-history {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        /* Styles Carte */
+        #map-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #map-message {
+            margin: 20px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .dark-mode #map-message {
+            color: #ddd;
+        }
+        .map-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+        }
+        .map-button:hover {
+            background-color: #1e88e5;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+            margin-right: 100px;
+            text-align: left;
+        }
+        #agenda h1, #stopwatch h1, #map h1 {
+            color: #333;
+            margin-right: 0;
+            text-align: center;
+        }
+        #compass h1 {
+            color: #333;
+            margin-right: 0;
+            text-align: center;
+        }
+        .dark-mode h1 {
+            color: #ddd;
+        }
+        .mode-toggle {
+            margin-bottom: 10px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-    <p>Redirection vers la calculatrice...</p>
+    <!-- Bouton pour le mode sombre -->
+    <button class="theme-toggle" onclick="toggleTheme()">Mode Sombre</button>
+    <!-- Sélecteur de couleur pour le fond (uniquement pour la calculatrice) -->
+    <div class="color-picker">
+        <span>Fond Calculatrice : </span>
+        <input type="color" id="background-color" value="#ffffff" onchange="changeBackgroundColor()">
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('calculator')">Calculatrice</button>
+            <button class="tab-button" onclick="openTab('agenda')">Agenda</button>
+            <button class="tab-button" onclick="openTab('compass')">Boussole</button>
+            <button class="tab-button" onclick="openTab('stopwatch')">Chronomètre</button>
+            <button class="tab-button" onclick="openTab('map')">Carte</button>
+        </div>
+
+        <!-- Calculatrice -->
+        <div id="calculator" class="tab-content active">
+            <h1>Calculatrice Scientifique</h1>
+            <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
+            <div class="mode-toggle">
+                <label>Mode : </label>
+                <select id="angleMode">
+                    <option value="degrees">Degrés</option>
+                    <option value="radians">Radians</option>
+                </select>
+            </div>
+            <input type="text" id="calc-display" readonly value="0">
+            <div class="calc-buttons">
+                <button class="memory calc-button" onclick="memoryClear()">MC</button>
+                <button class="memory calc-button" onclick="memoryRecall()">MR</button>
+                <button class="memory calc-button" onclick="memoryAdd()">M+</button>
+                <button class="memory calc-button" onclick="memorySubtract()">M-</button>
+                <button class="clear calc-button" onclick="clearCalcDisplay()">C</button>
+
+                <button class="function calc-button" onclick="calculateFunction('Math.sqrt')">√</button>
+                <button class="function calc-button" onclick="calculateFunction('Math.pow', prompt('Exposant ?'))">x^y</button>
+                <button class="function calc-button" onclick="calculateFunction('factorial')">x!</button>
+                <button class="function calc-button" onclick="calculateFunction('inverse')">1/x</button>
+                <button class="operator calc-button" onclick="appendToCalcDisplay('/')">÷</button>
+
+                <button class="function calc-button" onclick="appendToCalcDisplay('Math.PI')">π</button>
+                <button class="function calc-button" onclick="appendToCalcDisplay('Math.E')">e</button>
+                <button class="function calc-button" onclick="calculateFunction('Math.sin')">sin</button>
+                <button class="function calc-button" onclick="calculateFunction('Math.cos')">cos</button>
+                <button class="function calc-button" onclick="calculateFunction('Math.tan')">tan</button>
+
+                <button class="calc-button" onclick="appendToCalcDisplay('7')">7</button>
+                <button class="calc-button" onclick="appendToCalcDisplay('8')">8</button>
+                <button class="calc-button" onclick="appendToCalcDisplay('9')">9</button>
+                <button class="operator calc-button" onclick="appendToCalcDisplay('*')">×</button>
+                <button class="calc-button" onclick="appendToCalcDisplay('(')">(</button>
+
+                <button class="calc-button" onclick="appendToCalcDisplay('4')">4</button>
+                <button class="calc-button" onclick="appendToCalcDisplay('5')">5</button>
+                <button class="calc-button" onclick="appendToCalcDisplay('6')">6</button>
+                <button class="operator calc-button" onclick="appendToCalcDisplay('-')">-</button>
+                <button class="calc-button" onclick="appendToCalcDisplay(')')">)</button>
+
+                <button class="calc-button" onclick="appendToCalcDisplay('1')">1</button>
+                <button class="calc-button" onclick="appendToCalcDisplay('2')">2</button>
+                <button class="calc-button" onclick="appendToCalcDisplay('3')">3</button>
+                <button class="operator calc-button" onclick="appendToCalcDisplay('+')">+</button>
+                <button class="function calc-button" onclick="calculateFunction('Math.log')">ln</button>
+
+                <button class="calc-button" onclick="appendToCalcDisplay('0')">0</button>
+                <button class="calc-button" onclick="appendToCalcDisplay('.')">.</button>
+                <button class="calc-button" onclick="calculateCalc()">=</button>
+                <button class="function calc-button" onclick="calculateFunction('Math.log10')">log</button>
+                <button class="function calc-button" onclick="calculateFunction('Math.exp')">e^x</button>
+
+                <button class="function calc-button" onclick="calculatePercent()">%</button>
+                <button class="function calc-button" onclick="calculateFunction('Math.abs')">|x|</button>
+                <button class="clear calc-button" onclick="clearCalcHistory()">Clear Hist.</button>
+                <button class="function calc-button" onclick="appendToCalcDisplay('Math.E')">e</button>
+                <button class="function calc-button" onclick="appendToCalcDisplay('Math.PI')">π</button>
+            </div>
+            <div id="calc-history">Historique :</div>
+        </div>
+
+        <!-- Agenda -->
+        <div id="agenda" class="tab-content">
+            <h1>Agenda ThinkPad RL</h1>
+            <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
+            <div class="agenda-form">
+                <input type="text" class="agenda-input" id="event-description" placeholder="Description de l'événement">
+                <input type="date" class="agenda-input" id="event-date">
+                <input type="time" class="agenda-input" id="event-time">
+                <select class="agenda-select" id="event-type">
+                    <option value="meeting">Réunion</option>
+                    <option value="task">Tâche</option>
+                </select>
+                <input type="color" class="agenda-input" id="event-color" value="#2196F3" title="Couleur de l'événement">
+                <input type="number" class="agenda-input" id="event-latitude" placeholder="Latitude" step="any">
+                <input type="number" class="agenda-input" id="event-longitude" placeholder="Longitude" step="any">
+                <button class="agenda-button" onclick="fillEventLocation()">Utiliser ma position</button>
+                <button class="agenda-button" onclick="addEvent()">Ajouter</button>
+            </div>
+            <div id="event-list"></div>
+            <div class="calendar-view-toggle">
+                <label>Voir : </label>
+                <select id="calendar-view" onchange="changeCalendarView()">
+                    <option value="dayGridMonth">Mensuelle</option>
+                    <option value="timeGridWeek">Hebdomadaire</option>
+                    <option value="timeGridDay">Quotidienne</option>
+                </select>
+            </div>
+            <div id="calendar"></div>
+        </div>
+
+        <!-- Boussole -->
+        <div id="compass" class="tab-content">
+            <h1>Boussole ThinkPad RL</h1>
+            <div class="compass-container">
+                <div class="compass">
+                    <div class="needle" id="compass-needle"></div>
+                </div>
+            </div>
+            <div class="compass-message" id="compass-message">
+                Veuillez vous déplacer (par exemple,_
+
+ marcher 5 à 10 mètres dans une direction) pour que l'orientation puisse être calculée.<br>Assurez-vous que la géolocalisation est activée dans les paramètres de votre appareil.<br>Pour Cyberpunk 2077une meilleure précision, effectuez le test à l'extérieur dans un espace ouvert.
+            </div>
+            <button class="compass-button" onclick="startCompass()" style="display: none;" id="permission-button">Demander l'accès à la géolocalisation</button>
+        </div>
+
+        <!-- Chronomètre -->
+        <div id="stopwatch" class="tab-content">
+            <h1>Chronomètre ThinkPad RL</h1>
+            <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
+            <div id="stopwatch-display">00:00:00.000</div>
+            <div class="stopwatch-buttons">
+                <button class="stopwatch-button" onclick="startStopwatch()">Démarrer</button>
+                <button class="stopwatch-button" onclick="stopStopwatch()" disabled>Arrêter</button>
+                <button class="stopwatch-button" onclick="resetStopwatch()">Réinitialiser</button>
+                <button class="stopwatch-button" onclick="lapStopwatch()" disabled>Ajouter un tour</button>
+            </div>
+            <div id="lap-list">Tours :</div>
+            <div id="stopwatch-history">Historique des sessions :</div>
+        </div>
+
+        <!-- Carte -->
+        <div id="map" class="tab-content">
+            <h1>Carte ThinkPad RL</h1>
+            <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
+            <div id="map-container" style="height: 400px;"></div>
+            <div id="map-message">Chargement de la carte... Veuillez activer la géolocalisation pour centrer la carte sur votre position.</div>
+            <button class="map-button" onclick="centerMapOnUser()" style="display: none;" id="map-permission-button">Demander l'accès à la géolocalisation</button>
+        </div>
+    </div>
+
+    <script>
+        // Gestion du mode sombre
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            document.querySelector('.theme-toggle').textContent = isDarkMode ? 'Mode Clair' : 'Mode Sombre';
+            if (calendar) calendar.render();
+        }
+
+        // Charger le thème au démarrage
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.theme-toggle').textContent = 'Mode Clair';
+        }
+
+        // Gestion de la couleur de fond (uniquement pour la calculatrice)
+        function changeBackgroundColor() {
+            const color = document.getElementById('background-color').value;
+            document.querySelector('#calculator.tab-content').style.backgroundColor = color;
+            localStorage.setItem('calcBackgroundColor', color);
+        }
+
+        // Charger la couleur de fond de la calculatrice au démarrage
+        const savedCalcColor = localStorage.getItem('calcBackgroundColor');
+        if (savedCalcColor) {
+            document.querySelector('#calculator.tab-content').style.backgroundColor = savedCalcColor;
+            document.getElementById('background-color').value = savedCalcColor;
+        }
+
+        // Gestion des onglets
+        function openTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            buttons.forEach(button => button.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab-button[onclick="openTab('${tabName}')"]`).classList.add('active');
+            if (tabName === 'agenda') {
+                loadCalendar();
+            } else if (tabName === 'compass') {
+                startCompass();
+            } else if (tabName === 'map') {
+                initMap();
+                centerMapOnUser();
+            }
+        }
+
+        // Scripts Calculatrice
+        let calcDisplay = document.getElementById('calc-display');
+        let calcHistory = document.getElementById('calc-history');
+        let calcMemory = 0;
+        let angleMode = document.getElementById('angleMode');
+
+        function appendToCalcDisplay(value) {
+            if (calcDisplay.value === '0') {
+                calcDisplay.value = value;
+            } else {
+                calcDisplay.value += value;
+            }
+        }
+
+        function clearCalcDisplay() {
+            calcDisplay.value = '0';
+        }
+
+        function clearCalcHistory() {
+            calcHistory.innerHTML = 'Historique :';
+        }
+
+        function calculateCalc() {
+            try {
+                let expression = calcDisplay.value;
+                let result = eval(expression);
+                if (isFinite(result)) {
+                    calcDisplay.value = result.toFixed(4);
+                    calcHistory.innerHTML += `<br>${expression} = ${result.toFixed(4)}`;
+                } else {
+                    calcDisplay.value = 'Erreur';
+                }
+            } catch (e) {
+                calcDisplay.value = 'Erreur';
+            }
+        }
+
+        function calculateFunction(func, extraArg = null) {
+            try {
+                let value = parseFloat(calcDisplay.value);
+                let result;
+                let mode = angleMode.value;
+                let angle = value;
+
+                if (mode === 'degrees' && (func === 'Math.sin' || func === 'Math.cos' || func === 'Math.tan')) {
+                    angle = value * (Math.PI / 180);
+                }
+
+                switch (func) {
+                    case 'Math.sqrt':
+                        result = Math.sqrt(value);
+                        break;
+                    case 'Math.sin':
+                        result = Math.sin(angle);
+                        break;
+                    case 'Math.cos':
+                        result = Math.cos(angle);
+                        break;
+                    case 'Math.tan':
+                        result = Math.tan(angle);
+                        break;
+                    case 'Math.log':
+                        result = Math.log(value);
+                        break;
+                    case 'Math.log10':
+                        result = Math.log10(value);
+                        break;
+                    case 'Math.exp':
+                        result = Math.exp(value);
+                        break;
+                    case 'Math.pow':
+                        result = Math.pow(value, parseFloat(extraArg));
+                        break;
+                    case 'Math.abs':
+                        result = Math.abs(value);
+                        break;
+                    case 'factorial':
+                        result = factorial(value);
+                        break;
+                    case 'inverse':
+                        result = 1 / value;
+                        break;
+                    default:
+                        result = 'Erreur';
+                }
+
+                if (isFinite(result)) {
+                    calcDisplay.value = result.toFixed(4);
+                    calcHistory.innerHTML += `<br>${func}(${value}${extraArg ? ',' + extraArg : ''}) = ${result.toFixed(4)}`;
+                } else {
+                    calcDisplay.value = 'Erreur';
+                }
+            } catch (e) {
+                calcDisplay.value = 'Erreur';
+            }
+        }
+
+        function factorial(n) {
+            n = Math.floor(n);
+            if (n < 0) return 'Erreur';
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        function calculatePercent() {
+            try {
+                let value = parseFloat(calcDisplay.value);
+                let result = value / 100;
+                calcDisplay.value = result.toFixed(4);
+                calcHistory.innerHTML += `<br>${value}% = ${result.toFixed(4)}`;
+            } catch (e) {
+                calcDisplay.value = 'Erreur';
+            }
+        }
+
+        function memoryAdd() {
+            calcMemory += parseFloat(calcDisplay.value) || 0;
+        }
+
+        function memorySubtract() {
+            calcMemory -= parseFloat(calcDisplay.value) || 0;
+        }
+
+        function memoryRecall() {
+            calcDisplay.value = calcMemory.toString();
+        }
+
+        function memoryClear() {
+            calcMemory = 0;
+        }
+
+        // Scripts Agenda
+        let events = JSON.parse(localStorage.getItem('events')) || [];
+        let calendar;
+
+        // Demander la permission pour les notifications au démarrage
+        if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+            Notification.requestPermission();
+        }
+
+        function loadEvents() {
+            const eventList = document.getElementById('event-list');
+            eventList.innerHTML = '';
+            events.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+            events.forEach((event, index) => {
+                const eventItem = document.createElement('div');
+                eventItem.className = `event-item event-${event.type}`;
+                eventItem.style.borderLeft = `5px solid ${event.color}`;
+                eventItem.innerHTML = `
+                    <span>${event.date} ${event.time} - ${event.description} (${event.type === 'meeting' ? 'Réunion' : 'Tâche'})</span>
+                    <button class="delete-btn agenda-button" onclick="deleteEvent(${index})">Supprimer</button>
+                `;
+                eventList.appendChild(eventItem);
+
+                // Programmer un rappel 5 minutes avant l'événement
+                const eventDateTime = new Date(`${event.date}T${event.time}`);
+                const now = new Date();
+                const timeUntilEvent = eventDateTime - now;
+                const reminderTime = timeUntilEvent - 5 * 60 * 1000;
+                if (reminderTime > 0) {
+                    setTimeout(() => {
+                        if (Notification.permission === 'granted') {
+                            new Notification('Rappel d\'événement', {
+                                body: `${event.description} à ${event.time} aujourd'hui !`,
+                                icon: 'https://i.imgur.com/h065EKT.jpeg'
+                            });
+                        }
+                    }, reminderTime);
+                }
+            });
+
+            // Mettre à jour le calendrier
+            if (calendar) {
+                calendar.getEvents().forEach(event => event.remove());
+                events.forEach(event => {
+                    calendar.addEvent({
+                        title: event.description,
+                        start: `${event.date}T${event.time}`,
+                        backgroundColor: event.color,
+                        borderColor: event.color
+                    });
+                });
+                calendar.render();
+            }
+
+            // Rafraîchir les marqueurs de la carte si la carte est initialisée
+            if (map) {
+                addEventMarkers();
+            }
+        }
+
+        function loadCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 'auto',
+                events: events.map(event => ({
+                    title: event.description,
+                    start: `${event.date}T${event.time}`,
+                    backgroundColor: event.color,
+                    borderColor: event.color
+                })),
+                eventClick: function(info) {
+                    alert(`${info.event.title} à ${info.event.start.toLocaleString()}`);
+                },
+                locale: 'fr'
+            });
+            calendar.render();
+        }
+
+        function changeCalendarView() {
+            const view = document.getElementById('calendar-view').value;
+            if (calendar) {
+                calendar.changeView(view);
+                calendar.render();
+            }
+        }
+
+        function addEvent() {
+            const description = document.getElementById('event-description').value;
+            const date = document.getElementById('event-date').value;
+            const time = document.getElementById('event-time').value;
+            const type = document.getElementById('event-type').value;
+            const color = document.getElementById('event-color').value;
+            const latitude = document.getElementById('event-latitude').value;
+            const longitude = document.getElementById('event-longitude').value;
+
+            if (description && date && time) {
+                events.push({ description, date, time, type, color, latitude, longitude });
+                localStorage.setItem('events', JSON.stringify(events));
+                loadEvents();
+                document.getElementById('event-description').value = '';
+                document.getElementById('event-date').value = '';
+                document.getElementById('event-time').value = '';
+                document.getElementById('event-color').value = '#2196F3';
+                document.getElementById('event-latitude').value = '';
+                document.getElementById('event-longitude').value = '';
+            } else {
+                alert('Veuillez remplir tous les champs obligatoires (description, date, heure) !');
+            }
+        }
+
+        function fillEventLocation() {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        document.getElementById('event-latitude').value = position.coords.latitude;
+                        document.getElementById('event-longitude').value = position.coords.longitude;
+                    },
+                    error => {
+                        alert('Erreur : ' + error.message);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 0,
+                        timeout: 10000
+                    }
+                );
+            } else {
+                alert('La géolocalisation n\'est pas prise en charge.');
+            }
+        }
+
+        function deleteEvent(index) {
+            events.splice(index, 1);
+            localStorage.setItem('events', JSON.stringify(events));
+            loadEvents();
+        }
+
+        // Scripts Boussole
+        let watchId = null;
+        let previousPosition = null;
+        const MIN_ACCURACY = 50;
+        const MIN_DISTANCE = 5;
+
+        function startCompass() {
+            const needle = document.getElementById('compass-needle');
+            const message = document.getElementById('compass-message');
+            const permissionButton = document.getElementById('permission-button');
+
+            message.innerHTML = 'Veuillez vous déplacer (par exemple, marcher 5 à 10 mètres dans une direction) pour calculer l\'orientation.<br>Assurez-vous que la géolocalisation est activée et que vous êtes dans un espace ouvert pour une meilleure précision.';
+            permissionButton.style.display = 'none';
+            needle.style.transform = 'translate(-50%, -100%) rotate(0deg)';
+
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            previousPosition = null;
+
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    () => {
+                        watchId = navigator.geolocation.watchPosition(
+                            position => {
+                                const coords = position.coords;
+
+                                if (coords.accuracy > MIN_ACCURACY) {
+                                    message.innerHTML = `Précision GPS insuffisante (${Math.round(coords.accuracy)} mètres).<br>Veuillez vous déplacer dans un espace ouvert (à l\'extérieur) pour améliorer la précision.<br>Diagnostics :<br>Latitude : ${coords.latitude.toFixed(6)}<br>Longitude : ${coords.longitude.toFixed(6)}<br>Heading disponible : ${coords.heading !== null && coords.heading !== undefined ? coords.heading : 'Non'}`;
+                                    return;
+                                }
+
+                                let diagnosticMessage = `<small>Diagnostics :<br>`;
+                                diagnosticMessage += `Précision GPS : ${Math.round(coords.accuracy)} mètres<br>`;
+                                diagnosticMessage += `Latitude : ${coords.latitude.toFixed(6)}<br>`;
+                                diagnosticMessage += `Longitude : ${coords.longitude.toFixed(6)}<br>`;
+                                diagnosticMessage += `Heading disponible : ${coords.heading !== null && coords.heading !== undefined ? coords.heading : 'Non'}</small>`;
+
+                                if (coords.heading !== null && coords.heading !== undefined && coords.speed > 0) {
+                                    const heading = coords.heading;
+                                    needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+                                    message.innerHTML = `Orientation : ${Math.round(heading)}°<br>(Basée sur la géolocalisation directe)<br>${diagnosticMessage}`;
+                                } else {
+                                    if (previousPosition) {
+                                        const lat1 = previousPosition.latitude;
+                                        const lon1 = previousPosition.longitude;
+                                        const lat2 = coords.latitude;
+                                        const lon2 = coords.longitude;
+
+                                        const R = 6371000;
+                                        const dLat = (lat2 - lat1) * (Math.PI / 180);
+                                        const dLon = (lon2 - lon1) * (Math.PI / 180);
+                                        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                                                  Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                                                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                                        const distance = R * c;
+
+                                        if (distance >= MIN_DISTANCE) {
+                                            const dLonRad = (lon2 - lon1) * (Math.PI / 180);
+                                            const lat1Rad = lat1 * (Math.PI / 180);
+                                            const lat2Rad = lat2 * (Math.PI / 180);
+
+                                            const y = Math.sin(dLonRad) * Math.cos(lat2Rad);
+                                            const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) -
+                                                      Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLonRad);
+                                            let bearing = Math.atan2(y, x) * (180 / Math.PI);
+                                            const heading = (bearing + 360) % 360;
+
+                                            needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+                                            message.innerHTML = `Orientation : ${Math.round(heading)}°<br>(Calculée à partir de vos déplacements)<br>Continuez à vous déplacer pour mettre à jour l'orientation.<br>${diagnosticMessage}`;
+                                        } else {
+                                            message.innerHTML = `Déplacement trop faible (${Math.round(distance)} mètres).<br>Veuillez marcher au moins ${MIN_DISTANCE} mètres dans une direction claire.<br>${diagnosticMessage}`;
+                                        }
+                                    } else {
+                                        message.innerHTML = `Première position enregistrée.<br>Veuillez marcher au moins ${MIN_DISTANCE} mètres pour calculer l'orientation.<br>${diagnosticMessage}`;
+                                    }
+
+                                    previousPosition = {
+                                        latitude: coords.latitude,
+                                        longitude: coords.longitude
+                                    };
+                                }
+                            },
+                            error => {
+                                message.innerHTML = `Erreur lors de l'accès à la géolocalisation : ${error.message}<br>Veuillez vérifier que la géolocalisation est activée dans les paramètres de votre appareil.`;
+                                permissionButton.style.display = 'block';
+                            },
+                            {
+                                enableHighAccuracy: true,
+                                maximumAge: 0,
+                                timeout: 10000
+                            }
+                        );
+
+                        if ('DeviceOrientationEvent' in window) {
+                            window.addEventListener('deviceorientation', function handler(event) {
+                                let heading = event.webkitCompassHeading || (360 - event.alpha);
+                                if (heading !== null && heading !== undefined) {
+                                    needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+                                    message.innerHTML = `Orientation : ${Math.round(heading)}°<br>(Basée sur le magnétomètre de l'appareil)<br>Pour une précision optimale, effectuez un mouvement en forme de "8" avec votre appareil.<br>${diagnosticMessage}`;
+                                    if (watchId !== null) {
+                                        navigator.geolocation.clearWatch(watchId);
+                                        watchId = null;
+                                    }
+                                    window.removeEventListener('deviceorientation', handler);
+                                }
+                            });
+                        }
+                    },
+                    error => {
+                        message.innerHTML = 'Permission refusée pour accéder à la géolocalisation.<br>Veuillez autoriser l\'accès dans les paramètres de votre navigateur.';
+                        permissionButton.style.display = 'block';
+                    }
+                );
+            } else {
+                message.innerHTML = 'La géolocalisation n\'est pas prise en charge sur cet appareil.<br>Vérifiez que votre navigateur et votre appareil sont compatibles.';
+                permissionButton.style.display = 'none';
+            }
+        }
+
+        // Scripts Chronomètre
+        let stopwatchInterval = null;
+        let stopwatchTime = 0;
+        let stopwatchRunning = false;
+        let laps = [];
+        let stopwatchHistory = JSON.parse(localStorage.getItem('stopwatchHistory')) || [];
+
+        function formatTime(ms) {
+            const hours = Math.floor(ms / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            const milliseconds = (ms % 1000).toString().padStart(3, '0');
+            return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        function startStopwatch() {
+            if (!stopwatchRunning) {
+                stopwatchRunning = true;
+                const startTime = Date.now() - stopwatchTime;
+                stopwatchInterval = setInterval(() => {
+                    stopwatchTime = Date.now() - startTime;
+                    document.getElementById('stopwatch-display').textContent = formatTime(stopwatchTime);
+                }, 10);
+                document.querySelector('.stopwatch-button[onclick="startStopwatch()"]').disabled = true;
+                document.querySelector('.stopwatch-button[onclick="stopStopwatch()"]').disabled = false;
+                document.querySelector('.stopwatch-button[onclick="lapStopwatch()"]').disabled = false;
+            }
+        }
+
+        function stopStopwatch() {
+            if (stopwatchRunning) {
+                clearInterval(stopwatchInterval);
+                stopwatchRunning = false;
+                document.querySelector('.stopwatch-button[onclick="startStopwatch()"]').disabled = false;
+                document.querySelector('.stopwatch-button[onclick="stopStopwatch()"]').disabled = true;
+                document.querySelector('.stopwatch-button[onclick="lapStopwatch()"]').disabled = true;
+                const session = {
+                    duration: formatTime(stopwatchTime),
+                    laps: [...laps],
+                    date: new Date().toLocaleString('fr-FR')
+                };
+                stopwatchHistory.push(session);
+                localStorage.setItem('stopwatchHistory', JSON.stringify(stopwatchHistory));
+                updateStopwatchHistory();
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            stopwatchRunning = false;
+            stopwatchTime = 0;
+            laps = [];
+            document.getElementById('stopwatch-display').textContent = '00:00:00.000';
+            document.getElementById('lap-list').innerHTML = 'Tours :';
+            document.querySelector('.stopwatch-button[onclick="startStopwatch()"]').disabled = false;
+            document.querySelector('.stopwatch-button[onclick="stopStopwatch()"]').disabled = true;
+            document.querySelector('.stopwatch-button[onclick="lapStopwatch()"]').disabled = true;
+        }
+
+        function lapStopwatch() {
+            if (stopwatchRunning) {
+                laps.push(formatTime(stopwatchTime));
+                const lapList = document.getElementById('lap-list');
+                lapList.innerHTML = 'Tours :<br>' + laps.map((lap, index) => `Tour ${index + 1}: ${lap}`).join('<br>');
+            }
+        }
+
+        function updateStopwatchHistory() {
+            const historyList = document.getElementById('stopwatch-history');
+            historyList.innerHTML = 'Historique des sessions :<br>' + stopwatchHistory.map((session, index) => 
+                `Session ${index + 1} (${session.date}): ${session.duration} (${session.laps.length} tours)`
+            ).join('<br>');
+        }
+
+        // Scripts Carte
+        let map = null;
+        let userMarker = null;
+        let eventMarkers = [];
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map-container').setView([0, 0], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        function centerMapOnUser() {
+            const message = document.getElementById('map-message');
+            const permissionButton = document.getElementById('map-permission-button');
+
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const { latitude, longitude } = position.coords;
+                        map.setView([latitude, longitude], 13);
+                        if (userMarker) {
+                            userMarker.setLatLng([latitude, longitude]);
+                        } else {
+                            userMarker = L.marker([latitude, longitude]).addTo(map)
+                                .bindPopup('Vous êtes ici').openPopup();
+                        }
+                        message.innerHTML = `Position : Latitude ${latitude.toFixed(6)}, Longitude ${longitude.toFixed(6)}`;
+                        permissionButton.style.display = 'none';
+                        addEventMarkers();
+                    },
+                    error => {
+                        message.innerHTML = `Erreur : ${error.message}<br>Veuillez autoriser la géolocalisation pour centrer la carte.`;
+                        permissionButton.style.display = 'block';
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 0,
+                        timeout: 10000
+                    }
+                );
+            } else {
+                message.innerHTML = 'La géolocalisation n\'est pas prise en charge par cet appareil.';
+                permissionButton.style.display = 'none';
+            }
+        }
+
+        function addEventMarkers() {
+            eventMarkers.forEach(marker => map.removeLayer(marker));
+            eventMarkers = [];
+
+            events.forEach(event => {
+                const lat = event.latitude ? parseFloat(event.latitude) : 36.123443 + (Math.random() - 0.5) * 0.01;
+                const lon = event.longitude ? parseFloat(event.longitude) : 7.533363 + (Math.random() - 0.5) * 0.01;
+                const marker = L.marker([lat, lon]).addTo(map)
+                    .bindPopup(`${event.description}<br>${event.date} ${event.time}<br>Type: ${event.type}`)
+                    .setIcon(L.icon({
+                        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34]
+                    }));
+                eventMarkers.push(marker);
+            });
+        }
+
+        // Charger les événements et l'historique du chronomètre au démarrage
+        loadEvents();
+        updateStopwatchHistory();
+    </script>
 </body>
 </html>
