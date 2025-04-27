@@ -175,47 +175,32 @@ Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
 Note : Le fichier LICENSE sera ajouté ultérieurement ou contactez l'auteur pour plus d'informations.
 Contact
 Auteur : Rabah Loudjani
-
 Email : loudjani.r@gmail.com
-
 GitHub : https://github.com/jawed56
-
-### **Personnalisations à faire après avoir collé**
 
 1. **Captures d'écran** :
    - Prenez des captures de chaque onglet (Calculatrice, Agenda, Boussole, Chronomètre, Carte) avec un outil comme `Cmd + Shift + 4` (Mac) ou `Win + Shift + S` (Windows).
    - Créez un dossier `screenshots/` dans votre projet et placez-y les images (ex. : `calculatrice.png`, `agenda.png`, etc.).
    - Mettez à jour les chemins dans la section "Captures d'écran" :
-     ```markdown
+     
      | ![Calculatrice](screenshots/calculatrice.png) | ![Agenda](screenshots/agenda.png) | ...
-     ```
-   - Si vous n'avez pas encore de captures, laissez la section telle quelle ou supprimez-la temporairement.
-
-2. **Informations de contact** :
+     
+   2. **Informations de contact** :
      
      - **Email** : loudjani.r@gmail.com
      - **GitHub** : [jawed56](https://github.com/jawed56)
-     ```
-     Par vos véritables coordonnées, par exemple :
-     ```markdown
+     
+     Coordonnées :
+     
      - **Email** : loudjani.r@gmail.com
-     - **GitHub** : [jawed56](https://github.com/jawed56)
-     ```
+     - **GitHub** : [jawed56](https://github.com)
+     
     3. **URL du dépôt GitHub** :
-   
-     git clone https://github.com/jawed56/pack-utilitaire-by-rabah.git
-     
-
-     git clone https://github.com/jawed56/pack-utilitaire-by-rabah.git
-     ```
-   - Si le projet n'est pas sur GitHub, laissez tel quel ou supprimez la ligne de clonage et mentionnez simplement : "Téléchargez les fichiers du projet."
-
-4. **Licence** :
+        git clone https://github.com/jawed56/pack-utilitaire-by-rabah.git
+         
+  4. **Licence** :
     
   Copyright (c) 2025 Rabah
-
-         ## Licence
-
      Ce projet est privé et destiné à un usage personnel. Contactez l'auteur pour toute demande d'utilisation ou de distribution.
 
      
