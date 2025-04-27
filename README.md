@@ -192,7 +192,7 @@ GitHub : https://github.com/jawed56
    - Si vous n'avez pas encore de captures, laissez la section telle quelle ou supprimez-la temporairement.
 
 2. **Informations de contact** :
-     ```markdown
+     
      - **Email** : loudjani.r@gmail.com
      - **GitHub** : [jawed56](https://github.com/jawed56)
      ```
@@ -202,17 +202,16 @@ GitHub : https://github.com/jawed56
      - **GitHub** : [jawed56](https://github.com/jawed56)
      ```
     3. **URL du dépôt GitHub** :
-     ```markdown
+   
      git clone https://github.com/jawed56/pack-utilitaire-by-rabah.git
-     ```
-         ```markdown
+     
+
      git clone https://github.com/jawed56/pack-utilitaire-by-rabah.git
      ```
    - Si le projet n'est pas sur GitHub, laissez tel quel ou supprimez la ligne de clonage et mentionnez simplement : "Téléchargez les fichiers du projet."
 
 4. **Licence** :
-   - Si vous voulez utiliser la licence MIT, créez un fichier `LICENSE` avec le texte suivant :
-  
+    
   Copyright (c) 2025 Rabah
 
          ## Licence
