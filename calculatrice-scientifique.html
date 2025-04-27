@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculatrice, Agenda et Boussole ThinkPad RL</title>
+    <title>Calculatrice, Agenda, Boussole, Chronomètre et Carte ThinkPad RL</title>
     <!-- Intégration de FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <!-- Intégration de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,17 +66,31 @@
             display: block;
         }
         #agenda.tab-content {
-            background-color: #FF6F61; /* Couleur vive pour l'agenda */
+            background-color: #FF6F61;
         }
         .dark-mode #agenda.tab-content {
-            background-color: #E65A50; /* Couleur ajustée pour le mode sombre */
+            background-color: #E65A50;
         }
         #compass.tab-content {
-            background-color: #e0f7fa; /* Fond cyan clair pour la boussole */
+            background-color: #e0f7fa;
             text-align: center;
         }
         .dark-mode #compass.tab-content {
-            background-color: #006064; /* Fond cyan sombre pour le mode sombre */
+            background-color: #006064;
+        }
+        #stopwatch.tab-content {
+            background-color: #fff3e0;
+            text-align: center;
+        }
+        .dark-mode #stopwatch.tab-content {
+            background-color: #ef6c00;
+        }
+        #map.tab-content {
+            background-color: #e8f5e9;
+            text-align: center;
+        }
+        .dark-mode #map.tab-content {
+            background-color: #2e7d32;
         }
         .dark-mode .tab-content {
             color: #ddd;
@@ -318,7 +335,7 @@
         .compass-container {
             position: relative;
             width: 200px;
-            height: 200px;
+            heightoree200px;
             margin: 20px auto;
         }
         .compass {
@@ -361,6 +378,103 @@
         .compass-button:hover {
             background-color: #1e88e5;
         }
+        /* Styles Chronomètre */
+        #stopwatch-display {
+            font-size: 48px;
+            font-family: monospace;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #stopwatch-display {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        .stopwatch-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stopwatch-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+        }
+        .stopwatch-button:hover {
+            background-color: #1e88e5;
+        }
+        .stopwatch-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #lap-list {
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #lap-list {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        #stopwatch-history {
+            max-height: 100px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #stopwatch-history {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        /* Styles Carte */
+        #map-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #map-message {
+            margin: 20px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .dark-mode #map-message {
+            color: #ddd;
+        }
+        .map-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+        }
+        .map-button:hover {
+            background-color: #1e88e5;
+        }
         h1 {
             color: #333;
             font-size: 24px;
@@ -368,8 +482,10 @@
             margin-right: 100px;
             text-align: left;
         }
-        #agenda h1 {
+        #agenda h1, #stopwatch h1, #map h1 {
             color: #333;
+            margin-right: 0;
+            text-align: center;
         }
         #compass h1 {
             color: #333;
@@ -399,6 +515,8 @@
             <button class="tab-button active" onclick="openTab('calculator')">Calculatrice</button>
             <button class="tab-button" onclick="openTab('agenda')">Agenda</button>
             <button class="tab-button" onclick="openTab('compass')">Boussole</button>
+            <button class="tab-button" onclick="openTab('stopwatch')">Chronomètre</button>
+            <button class="tab-button" onclick="openTab('map')">Carte</button>
         </div>
 
         <!-- Calculatrice -->
@@ -478,6 +596,9 @@
                     <option value="task">Tâche</option>
                 </select>
                 <input type="color" class="agenda-input" id="event-color" value="#2196F3" title="Couleur de l'événement">
+                <input type="number" class="agenda-input" id="event-latitude" placeholder="Latitude" step="any">
+                <input type="number" class="agenda-input" id="event-longitude" placeholder="Longitude" step="any">
+                <button class="agenda-button" onclick="fillEventLocation()">Utiliser ma position</button>
                 <button class="agenda-button" onclick="addEvent()">Ajouter</button>
             </div>
             <div id="event-list"></div>
@@ -501,9 +622,35 @@
                 </div>
             </div>
             <div class="compass-message" id="compass-message">
-                Veuillez vous déplacer (par exemple, marcher 5 à 10 mètres dans une direction) pour que l'orientation puisse être calculée.<br>Assurez-vous que la géolocalisation est activée dans les paramètres de votre appareil.<br>Pour une meilleure précision, effectuez le test à l'extérieur dans un espace ouvert.
+                Veuillez vous déplacer (par exemple,_
+
+ marcher 5 à 10 mètres dans une direction) pour que l'orientation puisse être calculée.<br>Assurez-vous que la géolocalisation est activée dans les paramètres de votre appareil.<br>Pour Cyberpunk 2077une meilleure précision, effectuez le test à l'extérieur dans un espace ouvert.
             </div>
             <button class="compass-button" onclick="startCompass()" style="display: none;" id="permission-button">Demander l'accès à la géolocalisation</button>
+        </div>
+
+        <!-- Chronomètre -->
+        <div id="stopwatch" class="tab-content">
+            <h1>Chronomètre ThinkPad RL</h1>
+            <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
+            <div id="stopwatch-display">00:00:00.000</div>
+            <div class="stopwatch-buttons">
+                <button class="stopwatch-button" onclick="startStopwatch()">Démarrer</button>
+                <button class="stopwatch-button" onclick="stopStopwatch()" disabled>Arrêter</button>
+                <button class="stopwatch-button" onclick="resetStopwatch()">Réinitialiser</button>
+                <button class="stopwatch-button" onclick="lapStopwatch()" disabled>Ajouter un tour</button>
+            </div>
+            <div id="lap-list">Tours :</div>
+            <div id="stopwatch-history">Historique des sessions :</div>
+        </div>
+
+        <!-- Carte -->
+        <div id="map" class="tab-content">
+            <h1>Carte ThinkPad RL</h1>
+            <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
+            <div id="map-container" style="height: 400px;"></div>
+            <div id="map-message">Chargement de la carte... Veuillez activer la géolocalisation pour centrer la carte sur votre position.</div>
+            <button class="map-button" onclick="centerMapOnUser()" style="display: none;" id="map-permission-button">Demander l'accès à la géolocalisation</button>
         </div>
     </div>
 
@@ -549,6 +696,9 @@
                 loadCalendar();
             } else if (tabName === 'compass') {
                 startCompass();
+            } else if (tabName === 'map') {
+                initMap();
+                centerMapOnUser();
             }
         }
 
@@ -740,6 +890,11 @@
                 });
                 calendar.render();
             }
+
+            // Rafraîchir les marqueurs de la carte si la carte est initialisée
+            if (map) {
+                addEventMarkers();
+            }
         }
 
         function loadCalendar() {
@@ -775,17 +930,42 @@
             const time = document.getElementById('event-time').value;
             const type = document.getElementById('event-type').value;
             const color = document.getElementById('event-color').value;
+            const latitude = document.getElementById('event-latitude').value;
+            const longitude = document.getElementById('event-longitude').value;
 
             if (description && date && time) {
-                events.push({ description, date, time, type, color });
+                events.push({ description, date, time, type, color, latitude, longitude });
                 localStorage.setItem('events', JSON.stringify(events));
                 loadEvents();
                 document.getElementById('event-description').value = '';
                 document.getElementById('event-date').value = '';
                 document.getElementById('event-time').value = '';
                 document.getElementById('event-color').value = '#2196F3';
+                document.getElementById('event-latitude').value = '';
+                document.getElementById('event-longitude').value = '';
             } else {
-                alert('Veuillez remplir tous les champs !');
+                alert('Veuillez remplir tous les champs obligatoires (description, date, heure) !');
+            }
+        }
+
+        function fillEventLocation() {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        document.getElementById('event-latitude').value = position.coords.latitude;
+                        document.getElementById('event-longitude').value = position.coords.longitude;
+                    },
+                    error => {
+                        alert('Erreur : ' + error.message);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 0,
+                        timeout: 10000
+                    }
+                );
+            } else {
+                alert('La géolocalisation n\'est pas prise en charge.');
             }
         }
 
@@ -795,70 +975,66 @@
             loadEvents();
         }
 
-        // Scripts Boussole (avec géolocalisation)
+        // Scripts Boussole
         let watchId = null;
         let previousPosition = null;
+        const MIN_ACCURACY = 50;
+        const MIN_DISTANCE = 5;
 
         function startCompass() {
             const needle = document.getElementById('compass-needle');
             const message = document.getElementById('compass-message');
             const permissionButton = document.getElementById('permission-button');
 
-            // Réinitialiser les messages et boutons
-            message.innerHTML = 'Veuillez vous déplacer (par exemple, marcher 5 à 10 mètres dans une direction) pour que l\'orientation puisse être calculée.<br>Assurez-vous que la géolocalisation est activée dans les paramètres de votre appareil.<br>Pour une meilleure précision, effectuez le test à l\'extérieur dans un espace ouvert.';
+            message.innerHTML = 'Veuillez vous déplacer (par exemple, marcher 5 à 10 mètres dans une direction) pour calculer l\'orientation.<br>Assurez-vous que la géolocalisation est activée et que vous êtes dans un espace ouvert pour une meilleure précision.';
             permissionButton.style.display = 'none';
+            needle.style.transform = 'translate(-50%, -100%) rotate(0deg)';
 
-            // Arrêter toute écoute précédente
             if (watchId !== null) {
                 navigator.geolocation.clearWatch(watchId);
                 watchId = null;
             }
             previousPosition = null;
 
-            // Vérifier si l'API Geolocation est prise en charge
             if ('geolocation' in navigator) {
-                // Demander la permission pour la géolocalisation
                 navigator.geolocation.getCurrentPosition(
                     () => {
-                        // Permission accordée, commencer à suivre la position
                         watchId = navigator.geolocation.watchPosition(
                             position => {
                                 const coords = position.coords;
-                                let heading = null;
 
-                                // Ajouter des diagnostics
+                                if (coords.accuracy > MIN_ACCURACY) {
+                                    message.innerHTML = `Précision GPS insuffisante (${Math.round(coords.accuracy)} mètres).<br>Veuillez vous déplacer dans un espace ouvert (à l\'extérieur) pour améliorer la précision.<br>Diagnostics :<br>Latitude : ${coords.latitude.toFixed(6)}<br>Longitude : ${coords.longitude.toFixed(6)}<br>Heading disponible : ${coords.heading !== null && coords.heading !== undefined ? coords.heading : 'Non'}`;
+                                    return;
+                                }
+
                                 let diagnosticMessage = `<small>Diagnostics :<br>`;
                                 diagnosticMessage += `Précision GPS : ${Math.round(coords.accuracy)} mètres<br>`;
                                 diagnosticMessage += `Latitude : ${coords.latitude.toFixed(6)}<br>`;
                                 diagnosticMessage += `Longitude : ${coords.longitude.toFixed(6)}<br>`;
                                 diagnosticMessage += `Heading disponible : ${coords.heading !== null && coords.heading !== undefined ? coords.heading : 'Non'}</small>`;
 
-                                // Vérifier si la propriété heading est disponible (par exemple, sur Android avec Chrome)
-                                if (coords.heading !== null && coords.heading !== undefined) {
-                                    heading = coords.heading;
+                                if (coords.heading !== null && coords.heading !== undefined && coords.speed > 0) {
+                                    const heading = coords.heading;
                                     needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
                                     message.innerHTML = `Orientation : ${Math.round(heading)}°<br>(Basée sur la géolocalisation directe)<br>${diagnosticMessage}`;
                                 } else {
-                                    // Si heading n'est pas disponible, calculer manuellement l'orientation
                                     if (previousPosition) {
                                         const lat1 = previousPosition.latitude;
                                         const lon1 = previousPosition.longitude;
                                         const lat2 = coords.latitude;
                                         const lon2 = coords.longitude;
 
-                                        // Calculer la distance entre les deux points (approximation simple)
-                                        const R = 6371000; // Rayon de la Terre en mètres
+                                        const R = 6371000;
                                         const dLat = (lat2 - lat1) * (Math.PI / 180);
                                         const dLon = (lon2 - lon1) * (Math.PI / 180);
                                         const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                                                   Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
                                                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
                                         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                                        const distance = R * c; // Distance en mètres
+                                        const distance = R * c;
 
-                                        // Ne mettre à jour l'orientation que si le déplacement est significatif (> 5 mètres)
-                                        if (distance > 5) {
-                                            // Calculer la direction entre deux points (en radians)
+                                        if (distance >= MIN_DISTANCE) {
                                             const dLonRad = (lon2 - lon1) * (Math.PI / 180);
                                             const lat1Rad = lat1 * (Math.PI / 180);
                                             const lat2Rad = lat2 * (Math.PI / 180);
@@ -867,26 +1043,17 @@
                                             const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) -
                                                       Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLonRad);
                                             let bearing = Math.atan2(y, x) * (180 / Math.PI);
-
-                                            // Ajuster pour pointer vers le nord
-                                            heading = (bearing + 360) % 360;
+                                            const heading = (bearing + 360) % 360;
 
                                             needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
                                             message.innerHTML = `Orientation : ${Math.round(heading)}°<br>(Calculée à partir de vos déplacements)<br>Continuez à vous déplacer pour mettre à jour l'orientation.<br>${diagnosticMessage}`;
                                         } else {
-                                            message.innerHTML = `Déplacement trop faible (${Math.round(distance)} mètres).<br>Veuillez marcher au moins 5 mètres pour calculer l'orientation.<br>${diagnosticMessage}`;
+                                            message.innerHTML = `Déplacement trop faible (${Math.round(distance)} mètres).<br>Veuillez marcher au moins ${MIN_DISTANCE} mètres dans une direction claire.<br>${diagnosticMessage}`;
                                         }
-
-                                        // Mettre à jour la position précédente
-                                        previousPosition = {
-                                            latitude: coords.latitude,
-                                            longitude: coords.longitude
-                                        };
                                     } else {
-                                        message.innerHTML = `Première position enregistrée.<br>Veuillez marcher au moins 5 mètres pour calculer l'orientation.<br>${diagnosticMessage}`;
+                                        message.innerHTML = `Première position enregistrée.<br>Veuillez marcher au moins ${MIN_DISTANCE} mètres pour calculer l'orientation.<br>${diagnosticMessage}`;
                                     }
 
-                                    // Mettre à jour la position précédente
                                     previousPosition = {
                                         latitude: coords.latitude,
                                         longitude: coords.longitude
@@ -894,7 +1061,8 @@
                                 }
                             },
                             error => {
-                                message.innerHTML = 'Erreur lors de l\'accès à la géolocalisation : ' + error.message + '<br>Veuillez vérifier que la géolocalisation est activée.';
+                                message.innerHTML = `Erreur lors de l'accès à la géolocalisation : ${error.message}<br>Veuillez vérifier que la géolocalisation est activée dans les paramètres de votre appareil.`;
+                                permissionButton.style.display = 'block';
                             },
                             {
                                 enableHighAccuracy: true,
@@ -902,20 +1070,177 @@
                                 timeout: 10000
                             }
                         );
+
+                        if ('DeviceOrientationEvent' in window) {
+                            window.addEventListener('deviceorientation', function handler(event) {
+                                let heading = event.webkitCompassHeading || (360 - event.alpha);
+                                if (heading !== null && heading !== undefined) {
+                                    needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+                                    message.innerHTML = `Orientation : ${Math.round(heading)}°<br>(Basée sur le magnétomètre de l'appareil)<br>Pour une précision optimale, effectuez un mouvement en forme de "8" avec votre appareil.<br>${diagnosticMessage}`;
+                                    if (watchId !== null) {
+                                        navigator.geolocation.clearWatch(watchId);
+                                        watchId = null;
+                                    }
+                                    window.removeEventListener('deviceorientation', handler);
+                                }
+                            });
+                        }
                     },
                     error => {
-                        message.innerHTML = 'Permission refusée pour accéder à la géolocalisation.<br>';
+                        message.innerHTML = 'Permission refusée pour accéder à la géolocalisation.<br>Veuillez autoriser l\'accès dans les paramètres de votre navigateur.';
                         permissionButton.style.display = 'block';
                     }
                 );
             } else {
-                message.innerHTML = 'La géolocalisation n\'est pas prise en charge sur cet appareil.<br>';
+                message.innerHTML = 'La géolocalisation n\'est pas prise en charge sur cet appareil.<br>Vérifiez que votre navigateur et votre appareil sont compatibles.';
                 permissionButton.style.display = 'none';
             }
         }
 
-        // Charger les événements au démarrage
+        // Scripts Chronomètre
+        let stopwatchInterval = null;
+        let stopwatchTime = 0;
+        let stopwatchRunning = false;
+        let laps = [];
+        let stopwatchHistory = JSON.parse(localStorage.getItem('stopwatchHistory')) || [];
+
+        function formatTime(ms) {
+            const hours = Math.floor(ms / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            const milliseconds = (ms % 1000).toString().padStart(3, '0');
+            return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        function startStopwatch() {
+            if (!stopwatchRunning) {
+                stopwatchRunning = true;
+                const startTime = Date.now() - stopwatchTime;
+                stopwatchInterval = setInterval(() => {
+                    stopwatchTime = Date.now() - startTime;
+                    document.getElementById('stopwatch-display').textContent = formatTime(stopwatchTime);
+                }, 10);
+                document.querySelector('.stopwatch-button[onclick="startStopwatch()"]').disabled = true;
+                document.querySelector('.stopwatch-button[onclick="stopStopwatch()"]').disabled = false;
+                document.querySelector('.stopwatch-button[onclick="lapStopwatch()"]').disabled = false;
+            }
+        }
+
+        function stopStopwatch() {
+            if (stopwatchRunning) {
+                clearInterval(stopwatchInterval);
+                stopwatchRunning = false;
+                document.querySelector('.stopwatch-button[onclick="startStopwatch()"]').disabled = false;
+                document.querySelector('.stopwatch-button[onclick="stopStopwatch()"]').disabled = true;
+                document.querySelector('.stopwatch-button[onclick="lapStopwatch()"]').disabled = true;
+                const session = {
+                    duration: formatTime(stopwatchTime),
+                    laps: [...laps],
+                    date: new Date().toLocaleString('fr-FR')
+                };
+                stopwatchHistory.push(session);
+                localStorage.setItem('stopwatchHistory', JSON.stringify(stopwatchHistory));
+                updateStopwatchHistory();
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            stopwatchRunning = false;
+            stopwatchTime = 0;
+            laps = [];
+            document.getElementById('stopwatch-display').textContent = '00:00:00.000';
+            document.getElementById('lap-list').innerHTML = 'Tours :';
+            document.querySelector('.stopwatch-button[onclick="startStopwatch()"]').disabled = false;
+            document.querySelector('.stopwatch-button[onclick="stopStopwatch()"]').disabled = true;
+            document.querySelector('.stopwatch-button[onclick="lapStopwatch()"]').disabled = true;
+        }
+
+        function lapStopwatch() {
+            if (stopwatchRunning) {
+                laps.push(formatTime(stopwatchTime));
+                const lapList = document.getElementById('lap-list');
+                lapList.innerHTML = 'Tours :<br>' + laps.map((lap, index) => `Tour ${index + 1}: ${lap}`).join('<br>');
+            }
+        }
+
+        function updateStopwatchHistory() {
+            const historyList = document.getElementById('stopwatch-history');
+            historyList.innerHTML = 'Historique des sessions :<br>' + stopwatchHistory.map((session, index) => 
+                `Session ${index + 1} (${session.date}): ${session.duration} (${session.laps.length} tours)`
+            ).join('<br>');
+        }
+
+        // Scripts Carte
+        let map = null;
+        let userMarker = null;
+        let eventMarkers = [];
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map-container').setView([0, 0], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        function centerMapOnUser() {
+            const message = document.getElementById('map-message');
+            const permissionButton = document.getElementById('map-permission-button');
+
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const { latitude, longitude } = position.coords;
+                        map.setView([latitude, longitude], 13);
+                        if (userMarker) {
+                            userMarker.setLatLng([latitude, longitude]);
+                        } else {
+                            userMarker = L.marker([latitude, longitude]).addTo(map)
+                                .bindPopup('Vous êtes ici').openPopup();
+                        }
+                        message.innerHTML = `Position : Latitude ${latitude.toFixed(6)}, Longitude ${longitude.toFixed(6)}`;
+                        permissionButton.style.display = 'none';
+                        addEventMarkers();
+                    },
+                    error => {
+                        message.innerHTML = `Erreur : ${error.message}<br>Veuillez autoriser la géolocalisation pour centrer la carte.`;
+                        permissionButton.style.display = 'block';
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 0,
+                        timeout: 10000
+                    }
+                );
+            } else {
+                message.innerHTML = 'La géolocalisation n\'est pas prise en charge par cet appareil.';
+                permissionButton.style.display = 'none';
+            }
+        }
+
+        function addEventMarkers() {
+            eventMarkers.forEach(marker => map.removeLayer(marker));
+            eventMarkers = [];
+
+            events.forEach(event => {
+                const lat = event.latitude ? parseFloat(event.latitude) : 36.123443 + (Math.random() - 0.5) * 0.01;
+                const lon = event.longitude ? parseFloat(event.longitude) : 7.533363 + (Math.random() - 0.5) * 0.01;
+                const marker = L.marker([lat, lon]).addTo(map)
+                    .bindPopup(`${event.description}<br>${event.date} ${event.time}<br>Type: ${event.type}`)
+                    .setIcon(L.icon({
+                        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34]
+                    }));
+                eventMarkers.push(marker);
+            });
+        }
+
+        // Charger les événements et l'historique du chronomètre au démarrage
         loadEvents();
+        updateStopwatchHistory();
     </script>
 </body>
 </html>
