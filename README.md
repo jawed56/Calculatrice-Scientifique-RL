@@ -1,4 +1,4 @@
-# calculatrice scientifique
+# calculatrice-scientifique
 
 Bienvenue sur ma calculatrice scientifique ! 🌈
 
