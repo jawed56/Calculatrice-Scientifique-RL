@@ -1,6 +1,6 @@
 # calculatrice-scientifique
 
-Bienvenue sur ma calculatrice scientifique ! 🌈
+Bienvenue sur le pack d'applications multichoix ! 🌈
 
 Cette calculatrice web permet de réaliser des calculs scientifiques avancés, avec des fonctionnalités comme :
 - Opérations de base (+, -, ×, ÷)
