@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>calculatrice-scientifique</title>
+    <title>Calculatrice, Agenda et Boussole ThinkPad RL</title>
     <!-- Intégration de FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
@@ -67,6 +67,13 @@
         }
         .dark-mode #agenda.tab-content {
             background-color: #E65A50; /* Couleur ajustée pour le mode sombre */
+        }
+        #compass.tab-content {
+            background-color: #e0f7fa; /* Fond cyan clair pour la boussole */
+            text-align: center;
+        }
+        .dark-mode #compass.tab-content {
+            background-color: #006064; /* Fond cyan sombre pour le mode sombre */
         }
         .dark-mode .tab-content {
             color: #ddd;
@@ -221,7 +228,7 @@
         }
         #agenda .agenda-input,
         #agenda .agenda-select {
-            background-color: #fff; /* Garder un fond blanc pour les champs */
+            background-color: #fff;
             color: #333;
         }
         .dark-mode #agenda .agenda-input,
@@ -269,23 +276,23 @@
             align-items: center;
         }
         .event-meeting {
-            background-color: #FFE0DC; /* Ajuster pour contraster avec le fond vif */
+            background-color: #FFE0DC;
         }
         .event-task {
-            background-color: #FFF5F3; /* Ajuster pour contraster avec le fond vif */
+            background-color: #FFF5F3;
         }
         .dark-mode .event-meeting {
-            background-color: #D94A3E; /* Ajuster pour le mode sombre */
+            background-color: #D94A3E;
         }
         .dark-mode .event-task {
-            background-color: #C43F35; /* Ajuster pour le mode sombre */
+            background-color: #C43F35;
         }
         #calendar {
             margin-top: 20px;
             font-size: 14px;
         }
         #agenda #calendar {
-            background-color: #fff; /* Garder le calendrier en blanc pour la lisibilité */
+            background-color: #fff;
         }
         .dark-mode #agenda #calendar {
             background-color: #333;
@@ -307,6 +314,53 @@
         .calendar-view-toggle {
             margin-bottom: 10px;
         }
+        /* Styles Boussole */
+        .compass-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+        }
+        .compass {
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/5lW5Z5b.png') no-repeat center center;
+            background-size: cover;
+            border-radius: 50%;
+            position: relative;
+        }
+        .needle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 80px;
+            background-color: red;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%) rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+        .compass-message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+        .dark-mode .compass-message {
+            color: #ddd;
+        }
+        .compass-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+            margin-top: 10px;
+        }
+        .compass-button:hover {
+            background-color: #1e88e5;
+        }
         h1 {
             color: #333;
             font-size: 24px;
@@ -315,7 +369,12 @@
             text-align: left;
         }
         #agenda h1 {
-            color: #333; /* Garder le texte lisible sur le fond vif */
+            color: #333;
+        }
+        #compass h1 {
+            color: #333;
+            margin-right: 0;
+            text-align: center;
         }
         .dark-mode h1 {
             color: #ddd;
@@ -339,11 +398,12 @@
         <div class="tabs">
             <button class="tab-button active" onclick="openTab('calculator')">Calculatrice</button>
             <button class="tab-button" onclick="openTab('agenda')">Agenda</button>
+            <button class="tab-button" onclick="openTab('compass')">Boussole</button>
         </div>
 
         <!-- Calculatrice -->
         <div id="calculator" class="tab-content active">
-            <h1>calculatrice-cientifique</h1>
+            <h1>Calculatrice Scientifique</h1>
             <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
             <div class="mode-toggle">
                 <label>Mode : </label>
@@ -417,7 +477,7 @@
                     <option value="meeting">Réunion</option>
                     <option value="task">Tâche</option>
                 </select>
-                <input type="color" class="agenda-input" id="event-color" value="#2196F3" title="Couleur de l'événement">
+                <input type="color" class="agenda-input" id at="event-color" value="#2196F3" title="Couleur de l'événement">
                 <button class="agenda-button" onclick="addEvent()">Ajouter</button>
             </div>
             <div id="event-list"></div>
@@ -430,6 +490,20 @@
                 </select>
             </div>
             <div id="calendar"></div>
+        </div>
+
+        <!-- Boussole -->
+        <div id="compass" class="tab-content">
+            <h1>Boussole ThinkPad RL</h1>
+            <div class="compass-container">
+                <div class="compass">
+                    <div class="needle" id="compass-needle"></div>
+                </div>
+            </div>
+            <div class="compass-message" id="compass-message">
+                Veuillez vous déplacer (par exemple, marcher ou tourner) pour que l'orientation puisse être calculée.<br>Assurez-vous que la géolocalisation est activée dans les paramètres de votre appareil.
+            </div>
+            <button class="compass-button" onclick="startCompass()" style="display: none;" id="permission-button">Demander l'accès à la géolocalisation</button>
         </div>
     </div>
 
@@ -473,6 +547,8 @@
             document.querySelector(`.tab-button[onclick="openTab('${tabName}')"]`).classList.add('active');
             if (tabName === 'agenda') {
                 loadCalendar();
+            } else if (tabName === 'compass') {
+                startCompass();
             }
         }
 
@@ -717,6 +793,96 @@
             events.splice(index, 1);
             localStorage.setItem('events', JSON.stringify(events));
             loadEvents();
+        }
+
+        // Scripts Boussole (avec géolocalisation)
+        let watchId = null;
+        let previousPosition = null;
+
+        function startCompass() {
+            const needle = document.getElementById('compass-needle');
+            const message = document.getElementById('compass-message');
+            const permissionButton = document.getElementById('permission-button');
+
+            // Réinitialiser les messages et boutons
+            message.innerHTML = 'Veuillez vous déplacer (par exemple, marcher ou tourner) pour que l\'orientation puisse être calculée.<br>Assurez-vous que la géolocalisation est activée dans les paramètres de votre appareil.';
+            permissionButton.style.display = 'none';
+
+            // Arrêter toute écoute précédente
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+
+            // Vérifier si l'API Geolocation est prise en charge
+            if ('geolocation' in navigator) {
+                // Demander la permission pour la géolocalisation
+                navigator.geolocation.getCurrentPosition(
+                    () => {
+                        // Permission accordée, commencer à suivre la position
+                        watchId = navigator.geolocation.watchPosition(
+                            position => {
+                                const coords = position.coords;
+                                let heading = null;
+
+                                // Vérifier si la propriété heading est disponible (par exemple, sur Android avec Chrome)
+                                if (coords.heading !== null && coords.heading !== undefined) {
+                                    heading = coords.heading;
+                                    needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+                                    message.innerHTML = `Orientation : ${Math.round(heading)}°<br>(Basée sur la géolocalisation directe)`;
+                                } else {
+                                    // Si heading n'est pas disponible, calculer manuellement l'orientation
+                                    if (previousPosition) {
+                                        const lat1 = previousPosition.latitude;
+                                        const lon1 = previousPosition.longitude;
+                                        const lat2 = coords.latitude;
+                                        const lon2 = coords.longitude;
+
+                                        // Calculer la direction entre deux points (en radians)
+                                        const dLon = (lon2 - lon1) * (Math.PI / 180);
+                                        const lat1Rad = lat1 * (Math.PI / 180);
+                                        const lat2Rad = lat2 * (Math.PI / 180);
+
+                                        const y = Math.sin(dLon) * Math.cos(lat2Rad);
+                                        const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) -
+                                                  Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLon);
+                                        let bearing = Math.atan2(y, x) * (180 / Math.PI);
+
+                                        // Ajuster pour pointer vers le nord
+                                        heading = (bearing + 360) % 360;
+
+                                        needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+                                        message.innerHTML = `Orientation : ${Math.round(heading)}°<br>(Calculée à partir de vos déplacements)<br>Continuez à vous déplacer pour mettre à jour l'orientation.`;
+                                    } else {
+                                        message.innerHTML = 'Première position enregistrée.<br>Veuillez continuer à vous déplacer pour calculer l\'orientation.';
+                                    }
+
+                                    // Mettre à jour la position précédente
+                                    previousPosition = {
+                                        latitude: coords.latitude,
+                                        longitude: coords.longitude
+                                    };
+                                }
+                            },
+                            error => {
+                                message.innerHTML = 'Erreur lors de l\'accès à la géolocalisation : ' + error.message + '<br>Veuillez vérifier que la géolocalisation est activée.';
+                            },
+                            {
+                                enableHighAccuracy: true,
+                                maximumAge: 0,
+                                timeout: 10000
+                            }
+                        );
+                    },
+                    error => {
+                        message.innerHTML = 'Permission refusée pour accéder à la géolocalisation.<br>';
+                        permissionButton.style.display = 'block';
+                    }
+                );
+            } else {
+                message.innerHTML = 'La géolocalisation n\'est pas prise en charge sur cet appareil.<br>';
+                permissionButton.style.display = 'none';
+            }
         }
 
         // Charger les événements au démarrage
