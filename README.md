@@ -1,6 +1,6 @@
 # calculatrice-scientifique
 
-Bienvenue sur le pack utilitaire-by Rabah Loudjani ! 🌈
+Bienvenue sur le pack utilitaire-By Rabah Loudjani ! 🌈
 
 Cette calculatrice web permet de réaliser des calculs scientifiques avancés, avec des fonctionnalités comme :
 - Opérations de base (+, -, ×, ÷)
