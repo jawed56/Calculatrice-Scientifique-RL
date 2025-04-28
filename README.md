@@ -16,7 +16,7 @@ Une application web tout-en-un regroupant cinq outils pratiques : une calculatri
 
 ## Fonctionnalités
 
-- **Calculatrice scientifique** :
+- **calculatrice-scientifique** :
   - Calculs de base et fonctions avancées (sin, cos, tan, ln, etc.).
   - Support des degrés/radians, mémoire (M+, M-, MR, MC), et historique des calculs.
   - Personnalisation de la couleur de fond.
@@ -74,8 +74,9 @@ bash
 cd pack-utilitaire-by-rabah
 
 Ouvrez le fichier index.html dans un navigateur :
-Double-cliquez sur index.html, ou
-
+Double-cliquez sur index.html, 
+ou
+cliquer sur le lien https://jawed56.github.io/calculatrice-scientifique/calculatrice-scientifique.html
 Utilisez un serveur local pour éviter les restrictions CORS (recommandé) :
 bash
 
