@@ -66,7 +66,7 @@ Une application web tout-en-un regroupant cinq outils pratiques : une calculatri
 
 1. Clonez le dépôt GitHub ou téléchargez les fichiers :
    ```bash
-   git clone https://github.com/jawed56/pack-utilitaire-by-rabah.git
+   git clone https://github.com/jawed56/calculatrice-scientifique.git
 
 Accédez au dossier du projet :
 bash
