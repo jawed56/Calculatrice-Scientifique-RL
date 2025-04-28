@@ -198,7 +198,7 @@ GitHub : https://github.com/jawed56
      
     3. **URL du dépôt GitHub** :
         git clone https://github.com/jawed56/pack-utilitaire-by-rabah.git
-        git clone https://jawed56.github.io/calculatrice-scientifique/calculatrice-scientifique.html
+        git clone https://jawed56.github.io/calculatrice-scientifique/index.html
          
   4. **Licence** :
     
