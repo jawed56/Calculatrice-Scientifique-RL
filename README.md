@@ -76,7 +76,8 @@ cd pack-utilitaire-by-rabah
 Ouvrez le fichier index.html dans un navigateur :
 Double-cliquez sur index.html, 
 ou
-cliquer sur le lien https://jawed56.github.io/calculatrice-scientifique/index.html
+cliquer sur le lien :
+https://jawed56.github.io/calculatrice-scientifique/index.html
 Utilisez un serveur local pour éviter les restrictions CORS (recommandé) :
 bash
 
