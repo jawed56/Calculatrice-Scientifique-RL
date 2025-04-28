@@ -521,7 +521,7 @@
 
         <!-- Calculatrice -->
         <div id="calculator" class="tab-content active">
-            <h1>Calculatrice Scientifique</h1>
+            <h1>calculatrice-scientifique</h1>
             <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
             <div class="mode-toggle">
                 <label>Mode : </label>
@@ -585,7 +585,7 @@
 
         <!-- Agenda -->
         <div id="agenda" class="tab-content">
-            <h1>Agenda ThinkPad RL</h1>
+            <h1>Agenda</h1>
             <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
             <div class="agenda-form">
                 <input type="text" class="agenda-input" id="event-description" placeholder="Description de l'événement">
@@ -615,7 +615,7 @@
 
         <!-- Boussole -->
         <div id="compass" class="tab-content">
-            <h1>Boussole ThinkPad RL</h1>
+            <h1>Boussole</h1>
             <div class="compass-container">
                 <div class="compass">
                     <div class="needle" id="compass-needle"></div>
@@ -631,7 +631,7 @@
 
         <!-- Chronomètre -->
         <div id="stopwatch" class="tab-content">
-            <h1>Chronomètre ThinkPad RL</h1>
+            <h1>Chronomètre</h1>
             <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
             <div id="stopwatch-display">00:00:00.000</div>
             <div class="stopwatch-buttons">
@@ -646,7 +646,7 @@
 
         <!-- Carte -->
         <div id="map" class="tab-content">
-            <h1>Carte ThinkPad RL</h1>
+            <h1>Carte</h1>
             <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
             <div id="map-container" style="height: 400px;"></div>
             <div id="map-message">Chargement de la carte... Veuillez activer la géolocalisation pour centrer la carte sur votre position.</div>
@@ -1087,12 +1087,12 @@
                         }
                     },
                     error => {
-                        message.innerHTML = 'Permission refusée pour accéder à la géolocalisation.<br>Veuillez autoriser l\'accès dans les paramètres de votre navigateur.';
+                        message.innerHTML = 'Permission refusée pour accéder à la géolocalisation.<br>Veuillez autoriser l'accès dans les paramètres de votre navigateur.';
                         permissionButton.style.display = 'block';
                     }
                 );
             } else {
-                message.innerHTML = 'La géolocalisation n\'est pas prise en charge sur cet appareil.<br>Vérifiez que votre navigateur et votre appareil sont compatibles.';
+                message.innerHTML = 'La géolocalisation n'est pas prise en charge sur cet appareil.<br>Vérifiez que votre navigateur et votre appareil sont compatibles.';
                 permissionButton.style.display = 'none';
             }
         }
