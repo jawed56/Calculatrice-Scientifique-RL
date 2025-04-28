@@ -198,7 +198,7 @@ GitHub : https://github.com/jawed56
      - **GitHub** : [jawed56](https://github.com)
      
     3. **URL du dépôt GitHub** :
-        git clone https://github.com/jawed56/index.git
+        git clone https://github.com/jawed56/calculatrice-scientifique/index.git
         git clone https://jawed56.github.io/calculatrice-scientifique/index.html
          
   4. **Licence** :
