@@ -1,6 +1,10 @@
 # Pack Utilitaire By Rabah
 
+![Calculatrice](screenshot.png)
+
 Une application web tout-en-un regroupant cinq outils pratiques : une calculatrice scientifique, un agenda avec calendrier, une boussole géolocalisée, un chronomètre avec historique, et une carte interactive. Conçue pour être intuitive, responsive, et dotée d'un mode sombre.
+
+
 
 ## Table des matières
 - [Fonctionnalités](#fonctionnalités)
@@ -48,8 +52,6 @@ Une application web tout-en-un regroupant cinq outils pratiques : une calculatri
   - Design responsive adapté aux mobiles et ordinateurs.
 
 ## Captures d'écran
-
-![Calculatrice](screenshot.png)
 
 | Calculatrice | Agenda | Boussole | Chronomètre | Carte |
 |--------------|--------|----------|-------------|-------|
