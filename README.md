@@ -190,6 +190,7 @@ GitHub : https://github.com/jawed56
    2. **Informations de contact** :
      
      - **Email** : loudjani.r@gmail.com
+       
      - **GitHub** : [jawed56](https://github.com/jawed56)
      
      Coordonnées :
@@ -198,7 +199,9 @@ GitHub : https://github.com/jawed56
      - **GitHub** : [jawed56](https://github.com)
      
     3. **URL du dépôt GitHub** :
+       
         git clone https://github.com/jawed56/calculatrice-scientifique.git
+       
         git clone https://jawed56.github.io/calculatrice-scientifique/index.html
          
   4. **Licence** :
