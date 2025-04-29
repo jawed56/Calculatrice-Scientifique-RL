@@ -73,7 +73,7 @@ Une application web tout-en-un regroupant cinq outils pratiques : une calculatri
 
 1. Clonez le dépôt GitHub ou téléchargez les fichiers :
    ```bash
-   git clone https://github.com/jawed56/calculatrice-scientifique.git
+   git clone https://github.com/jawed56/scientific-calculator.git
 
 Accédez au dossier du projet :
 bash
@@ -84,7 +84,7 @@ Ouvrez le fichier index.html dans un navigateur :
 Double-cliquez sur index.html, 
 ou
 cliquer sur le lien :
-https://jawed56.github.io/calculatrice-scientifique/index.html
+https://jawed56.github.io/scientific-calculator/index.html
 Utilisez un serveur local pour éviter les restrictions CORS (recommandé) :
 bash
 
