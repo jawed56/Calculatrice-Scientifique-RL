@@ -49,6 +49,8 @@ Une application web tout-en-un regroupant cinq outils pratiques : une calculatri
 
 ## Captures d'écran
 
+![Calculatrice](screenshot.png)
+
 | Calculatrice | Agenda | Boussole | Chronomètre | Carte |
 |--------------|--------|----------|-------------|-------|
 | ![Calculatrice](screenshots/calculatrice.png) | ![Agenda](screenshots/agenda.png) | ![Boussole](screenshots/boussole.png) | ![Chronomètre](screenshots/chronometre.png) | ![Carte](screenshots/carte.png) |
