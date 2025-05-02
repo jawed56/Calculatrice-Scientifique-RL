@@ -209,7 +209,7 @@ GitHub : https://github.com/jawed56
        
         git clone https://github.com/jawed56/scientific-calculator.git
        
-        git clone https://jawed56.github.io/scientific-calculator/index.html
+        lien direct https://jawed56.github.io/scientific-calculator/index.html
          
   4. **Licence** :
      
