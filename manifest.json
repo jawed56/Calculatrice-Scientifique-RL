@@ -8,14 +8,27 @@
     "theme_color": "#2196F3",
     "icons": [
         {
-            "src": "https://i.imgur.com/h065EKT.jpeg",
+            "src": "/scientific-calculator/icons/icon-192x192.png",
             "sizes": "192x192",
-            "type": "image/jpeg"
+            "type": "image/png"
         },
         {
-            "src": "https://i.imgur.com/h065EKT.jpeg",
+            "src": "/scientific-calculator/icons/icon-512x512.png",
             "sizes": "512x512",
-            "type": "image/jpeg"
+            "type": "image/png"
+        },
+        {
+            "src": "/scientific-calculator/icons/maskable-icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/scientific-calculator/screenshots/screenshot1.png",
+            "sizes": "1280x720",
+            "type": "image/png"
         }
     ]
 }
