@@ -1,4 +1,4 @@
-# Pack Utilitaire By Rabah
+# scientific-calculator
 
 ![Calculatrice](screenshot.png)
 ![carte](carte.png)
@@ -23,7 +23,7 @@ Une application web tout-en-un regroupant cinq outils pratiques : une calculatri
 
 ## Fonctionnalités
 
-- **calculatrice-scientifique** :
+- **scientific-calculator** :
   - Calculs de base et fonctions avancées (sin, cos, tan, ln, etc.).
   - Support des degrés/radians, mémoire (M+, M-, MR, MC), et historique des calculs.
   - Personnalisation de la couleur de fond.
