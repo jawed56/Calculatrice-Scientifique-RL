@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculatrice, Agenda, Boussole, Chronomètre et Carte</title>
+    <title>Calculatrice, Agenda, Boussole, Chronomètre, Carte et Horloge</title>
     <link rel="canonical" href="https://jawed56.github.io/scientific-calculator/">
-    <meta name="description" content="Pack Utilitaire By Rabah : une application web avec calculatrice scientifique, agenda, boussole, chronomètre et carte interactive.">
-    <meta name="keywords" content="calculatrice scientifique, agenda, boussole, chronomètre, carte, utilitaire, Rabah">
+    <meta name="description" content="Pack Utilitaire By Rabah : une application web avec calculatrice scientifique, agenda, boussole, chronomètre, carte interactive, et horloge numérique avec alarme.">
+    <meta name="keywords" content="calculatrice scientifique, agenda, boussole, chronomètre, carte, horloge, alarme, utilitaire, Rabah">
     <meta name="author" content="Rabah">
     <!-- Balises Open Graph pour les réseaux sociaux -->
-<meta property="og:title" content="Pack Utilitaire By Rabah">
-<meta property="og:description" content="Une application web avec calculatrice scientifique, agenda, boussole, chronomètre et carte interactive.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jawed56.github.io/scientific-calculator/">
-<meta property="og:image" content="https://i.imgur.com/h065EKT.jpeg">
+    <meta property="og:title" content="Pack Utilitaire By Rabah">
+    <meta property="og:description" content="Une application web avec calculatrice scientifique, agenda, boussole, chronomètre, carte interactive, et horloge numérique avec alarme.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jawed56.github.io/scientific-calculator/">
+    <meta property="og:image" content="https://i.imgur.com/h065EKT.jpeg">
+    <!-- Manifeste pour PWA -->
     <link rel="manifest" href="/scientific-calculator/manifest.json">
     <!-- Intégration de FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
@@ -102,6 +103,13 @@
         }
         .dark-mode #map.tab-content {
             background-color: #2e7d32;
+        }
+        #clock.tab-content {
+            background-color: #f3e5f5;
+            text-align: center;
+        }
+        .dark-mode #clock.tab-content {
+            background-color: #6a1b9a;
         }
         .dark-mode .tab-content {
             color: #ddd;
@@ -486,6 +494,48 @@
         .map-button:hover {
             background-color: #1e88e5;
         }
+        /* Styles Horloge Numérique et Alarme */
+        #clock-display {
+            font-size: 48px;
+            font-family: monospace;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        .dark-mode #clock-display {
+            background-color: #444;
+            color: #ddd;
+            border-color: #666;
+        }
+        .alarm-form {
+            margin-bottom: 20px;
+        }
+        .alarm-input, .alarm-button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .alarm-button {
+            background-color: #2196F3;
+            color: white;
+            cursor: pointer;
+        }
+        .alarm-button:hover {
+            background-color: #1e88e5;
+        }
+        #alarm-message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+        .dark-mode #alarm-message {
+            color: #ddd;
+        }
         h1 {
             color: #333;
             font-size: 24px;
@@ -493,12 +543,7 @@
             margin-right: 100px;
             text-align: left;
         }
-        #agenda h1, #stopwatch h1, #map h1 {
-            color: #333;
-            margin-right: 0;
-            text-align: center;
-        }
-        #compass h1 {
+        #agenda h1, #stopwatch h1, #map h1, #compass h1, #clock h1 {
             color: #333;
             margin-right: 0;
             text-align: center;
@@ -528,6 +573,7 @@
             <button class="tab-button" onclick="openTab('compass')">Boussole</button>
             <button class="tab-button" onclick="openTab('stopwatch')">Chronomètre</button>
             <button class="tab-button" onclick="openTab('map')">Carte</button>
+            <button class="tab-button" onclick="openTab('clock')">Horloge</button>
         </div>
 
         <!-- Calculatrice -->
@@ -661,6 +707,19 @@
             <div id="map-message">Chargement de la carte... Veuillez activer la géolocalisation pour centrer la carte sur votre position.</div>
             <button class="map-button" onclick="centerMapOnUser()" style="display: none;" id="map-permission-button">Demander l'accès à la géolocalisation</button>
         </div>
+
+        <!-- Horloge Numérique avec Alarme -->
+        <div id="clock" class="tab-content">
+            <h1>Horloge Numérique</h1>
+            <img src="https://i.imgur.com/h065EKT.jpeg" class="person-image" alt="Personne">
+            <div id="clock-display">00:00:00</div>
+            <div class="alarm-form">
+                <input type="time" class="alarm-input" id="alarm-time">
+                <button class="alarm-button" onclick="setAlarm()">Définir Alarme</button>
+                <button class="alarm-button" onclick="clearAlarm()">Annuler Alarme</button>
+            </div>
+            <div id="alarm-message">Aucune alarme définie.</div>
+        </div>
     </div>
 
     <script>
@@ -708,6 +767,8 @@
             } else if (tabName === 'map') {
                 initMap();
                 centerMapOnUser();
+            } else if (tabName === 'clock') {
+                updateClock();
             }
         }
 
@@ -1247,9 +1308,77 @@
             });
         }
 
+        // Scripts Horloge Numérique avec Alarme
+        let alarmTime = null;
+        let alarmInterval = null;
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('clock-display').textContent = `${hours}:${minutes}:${seconds}`;
+
+            // Vérifier si l'alarme doit sonner
+            if (alarmTime) {
+                const currentTime = `${hours}:${minutes}`;
+                if (currentTime === alarmTime) {
+                    triggerAlarm();
+                }
+            }
+        }
+
+        function setAlarm() {
+            const alarmInput = document.getElementById('alarm-time').value;
+            if (alarmInput) {
+                alarmTime = alarmInput;
+                document.getElementById('alarm-message').textContent = `Alarme définie pour ${alarmTime}.`;
+            } else {
+                document.getElementById('alarm-message').textContent = 'Veuillez sélectionner une heure pour l\'alarme.';
+            }
+        }
+
+        function clearAlarm() {
+            alarmTime = null;
+            document.getElementById('alarm-message').textContent = 'Aucune alarme définie.';
+            if (alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
+            }
+        }
+
+        function triggerAlarm() {
+            if (Notification.permission === 'granted') {
+                new Notification('Alarme !', {
+                    body: `Il est ${alarmTime} !`,
+                    icon: 'https://i.imgur.com/h065EKT.jpeg'
+                });
+            } else {
+                alert(`Alarme ! Il est ${alarmTime} !`);
+            }
+            // Arrêter l'alarme après avoir déclenché
+            clearAlarm();
+        }
+
+        // Mettre à jour l'horloge toutes les secondes
+        setInterval(updateClock, 1000);
+
         // Charger les événements et l'historique du chronomètre au démarrage
         loadEvents();
         updateStopwatchHistory();
+
+        // Enregistrement du Service Worker pour la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/scientific-calculator/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker enregistré avec succès :', registration);
+                    })
+                    .catch(error => {
+                        console.log('Échec de l\'enregistrement du Service Worker :', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
